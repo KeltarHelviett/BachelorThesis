@@ -24,5 +24,36 @@
                 "TEXINPUTS": "./bachelors-theses-2019/source/;"
             }
         },
-    ]
+    ],
+    "spellright.language": [
+        "en",
+        "ru"
+    ],
+    "spellright.documentTypes": [
+        "markdown",
+        "latex",
+        "plaintext"
+    ],
+    "spellright.latexSpellParameters": [
+        "author",
+        "title",
+        "date",
+        "chapter",
+        "section\\*?",
+        "subsection\\*?",
+        "subsubsection\\*?",
+        "part",
+        "paragraph",
+        "subparagraph",
+        "text(rm|sf|tt|md|bf|up|it|sl|sc|normal)",
+        "underline",
+        "emph",
+        "item",
+        "footnote(text)?",
+        "caption(of)?",
+        "multicolumn",
+        "href",
+        "hyperref",
+        "begin\\{frame\\}"
+    ],
 }
