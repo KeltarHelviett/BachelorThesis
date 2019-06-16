@@ -1,4 +1,7 @@
 \documentclass{fefu}
+\usepackage{float}
+\usepackage{algorithm}% http://ctan.org/pkg/algorithms
+\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
 \author{Терехов Д.Е.}
 \setschool{ШКОЛА ЕСТЕСТВЕННЫХ НАУК ДВФУ}
 \setdepartment{кафедра информатики, математического и компьютерного моделирования}{Чеботарев}
@@ -99,7 +102,48 @@ DistortionMesh виджет. Проблема такого подхода зак
 данной библиотеке не оказалось.
 \subsubsection{Генерация невыпуклой оболочки}
 Spine предоставляет возможность сгенерировать меш для текстуры (с предварительной генерацией, возможно, невыпуклой оболочки). 
-Это единственное найденное конкурирующее решение. 
+Это единственное найденное конкурирующее решение.
+\section{Математические методы}
+\subsection{Трассировка контура}
+Одним из способов генерации невыпуклой оболочки объекта $I$, представленного на текстуре, является выявление
+его контура $B$ (границы) и дальнейшее аппроксимация контура полигоном. Введем несколько понятий. Будем считать 
+пиксель белым, если он не принадлежит объекту, контур которого мы хотим выделить, черным в противном случае. 
+В каждом из нижеприведенных алгоритмов находится начальный пиксель. Будем считать начальным пикселем самый левый 
+нижний черный пиксель.
+\subsubsection{Square tracing}
+Идея данного алгоритма проста: если текущий пиксель черный, то нужно добавить его к множеству точек границы $B$,
+повернуть налево и сделать шаг вперед, иначе повернуть направо и сделать шаг вперед. Следующий псевдокод 
+описывает данный алгоритм:
+\begin{algorithm}
+    \caption{Square tracing}
+    \label{SquareTrace}
+    \begin{algorithmic}[1] % The number tells where the line numbering should start
+        \Procedure{Euclid}{$I$} \Comment{I is set of pixels}
+            \State $start \gets GetStartPixel(I)$
+            \State $B \gets \{start\}$
+            \State $direction \gets \left(0, -1\right)$
+            \State $next \gets start + direction$
+            \While{$next \not= start$}
+                \If{next is BLACK}
+                    \State $B \gets B \cup \{p\}$
+                    \State $direction \gets TurnLeft(direction)$
+                \Else
+                    \State $direction \gets TurnRight(direction)$
+                \EndIf
+                \State $next \gets next + direction$
+            \EndWhile
+            \State \textbf{return} $B$
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+\subsubsection{Moor neighborhood tracing}
+\subsection{Генерация невыпуклой оболочки}
+\subsubsection{Visvalingam line simplification algorithm}
+\subsubsection{4 point ?}
+\subsection{Триангуляция}
+Сравнение разных видов триангуляции, выбор Делоне, описание структур данных, описание юыважываж
+\subsection{Bin packing problem}
+Жадник + генетика
 \newpage
 \bibliographystyle{ugost2008ls}
 \bibliography{references}
