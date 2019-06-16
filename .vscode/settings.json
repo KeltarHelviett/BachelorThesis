@@ -56,4 +56,9 @@
         "hyperref",
         "begin\\{frame\\}"
     ],
+    "editor.rulers": [120],
+    "workbench.colorCustomizations": {
+        "editorRuler.foreground": "#ff4081"
+    },
+    "editor.minimap.enabled": false,
 }
