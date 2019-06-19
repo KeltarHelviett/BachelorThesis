@@ -18,6 +18,7 @@
                 "-file-line-error",
                 "-pdfxe",
                 "-outdir=%OUTDIR%",
+                "-shell-escape",
                 "%DOC%",
             ],
             "env": {
