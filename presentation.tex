@@ -30,17 +30,15 @@
 \title{Генерация текстурного меша и упаковка полигональных текстур в атлас}
 \author[Терехов Д.Е.]{Студент группы Б8403а Терехов Дмитрий Евгеньевич\\
 Руководитель:\\
-Старший преподаватель\\
+Старший преподаватель кафедры информатики, математического и компьютерного моделирования\\
 Александр Сергеевич Кленин}
-%\date{20 июня 2019}
-\date{}
+\date{10 июля 2019}
 \usetheme[progressbar=frametitle, numbering=fraction]{metropolis}
 \makeatletter
         \setlength{\metropolis@progressinheadfoot@linewidth}{2pt}
     \makeatother
-\date{\today}
 \begin{document}
-    \begin{frame}
+    \begin{frame}[fragile]
         \titlepage
         \thispagestyle{empty}
     \end{frame}
@@ -72,14 +70,17 @@
         \end{figure}
     \end{frame}
     \begin{frame}
-        \frametitle{Упаковка текстур в атлас}
-        \begin{itemize}
-            \item Жадный алгоритм
-            \item Генерация текстурного меша, полигональная упаковка
-        \end{itemize}
-        \begin{figure}
+        \frametitle{Меш}
+        \begin{figure}[H]
             \centering
-            \includegraphics[width=\linewidth, keepaspectratio]{SuperPacking.png}
+            \begin{subfigure}{0.49\linewidth}
+                \centering
+                \includegraphics[scale=0.25]{Dolphin_triangle_mesh.png}
+            \end{subfigure}
+            \begin{subfigure}{0.49\linewidth}
+                \centering
+                \includegraphics[scale=0.25]{2dmesh.png}
+            \end{subfigure}
         \end{figure}
     \end{frame}
     \begin{frame}
@@ -93,11 +94,31 @@
         \end{figure}
     \end{frame}
     \begin{frame}
-        \frametitle{Цели}
+        \frametitle{Текстурный атлас}
+        \begin{figure}[H]
+            \includegraphics[width = 0.9\linewidth, keepaspectratio]{TextureAtlas.png}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
+        \frametitle{Генерация меша}
+        \begin{figure}
+            \centering
+            \includegraphics[width=\linewidth, keepaspectratio]{SuperPacking.png}
+        \end{figure}
+    \end{frame}
+    
+    \begin{frame}
+        \frametitle{Цели и задачи}
         Цели:
         \begin{itemize}
             \item Оптимизировать упаковку текстур в атлас
             \item Позволить динамически задавать структуру меша
+        \end{itemize}
+        Задачи:
+        \begin{itemize}
+            \item Реализовать прямоугольную упаковку в атлас
+            \item Реализовать полигональную упаковку в атлас
+            \item Реализовать методы редактирования триангуляции множества точек
         \end{itemize}
     \end{frame}
     \begin{frame}
@@ -162,6 +183,13 @@
         \end{figure}
     \end{frame}
     \begin{frame}
+        \frametitle{Свойство Делоне}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.2]{DelaunayProperty.png}
+        \end{figure}
+    \end{frame}
+    \begin{frame}
         \frametitle{Флип}
         \begin{figure}[H]
             \centering
@@ -209,8 +237,8 @@
     \begin{frame}
         \frametitle{Удаление вершины, лежащей внутри триангуляции}
         \begin{itemize}
-            \item Образуется полигональная дыра. Ear Clipping $O(n^2)$, Seidel $O(n\log n)$ или $O(n\log n)$, 
-            Chazelle $O(n)$*
+            \item Образуется полигональная дыра. Ear Clipping $O(n^2)$, Seidel $O(n\log n)$ или $O(n\log^*n)$, 
+            Chazelle $O(n)$
             \item Проверка на условие Делоне, выполнение необходимых перестроений
         \end{itemize}
         \begin{figure}[H]
@@ -222,15 +250,15 @@
         \frametitle{Удаление граничной вершины}
         \begin{figure}[H]
             \centering
-            \begin{subfigure}{0.33\linewidth}
+            \begin{subfigure}{\linewidth}
                 \centering
                 \includegraphics[scale=0.225]{DeleteBoundary1.png}
             \end{subfigure}
-            \begin{subfigure}[H]{0.33\linewidth}
+            \begin{subfigure}[H]{0.49\linewidth}
                 \centering
                 \includegraphics[scale=0.225]{DeleteBoundary2.png}
             \end{subfigure}
-            \begin{subfigure}{0.33\linewidth}
+            \begin{subfigure}{0.49\linewidth}
                 \centering
                 \includegraphics[scale=0.225]{DeleteBoundary3.png}
             \end{subfigure}
@@ -263,20 +291,30 @@
     \end{frame}
     \begin{frame}
         \frametitle{Полигональная упаковка. Генетический алгоритм}
-        Генотип -- количество контейнеров + пары (позиция, поворот), описывающие меши
+        \begin{itemize}
+            \item Хромосома -- индекс атласа $+$ поворот вокруг центроида $+$ позиция центроида
+            \item Single-point crossover
+        \end{itemize}
+        
+        Функция приспособленности
         \[
-            f_cost = \alpha \cdot intersectionArea  + \beta \cdot outsideArea
+            f = \frac{\sum_{i=0}^n \frac{\left(fill_i - intersection_i\right)}{capacity_i}}{N}
         \]
     \end{frame}
     \begin{frame}
         \frametitle{Реализация}
-        Объем написанного кода 3,302 ++  959 -- (30 коммитов) в тестовом репозитории, 1200 ++, 100-- (15 коммитов) 
-        в репозитории Citrus. Реализованы методы работы со структурой меша (триангуляцией множества точек) для 
-        виджета PolygonMesh, методы генерации текстурного меша, генетический алгоритм и алгоритм гильотины для упаковки текстур в атласы.  
+        Объем написанного кода: 3,302 добавлений, 959 удалений, (30 коммитов) в тестовом репозитории и 1625 добавлений, 
+        251 удалений (22 коммита) в репозитории Citrus.
+        
+        Реализованы методы редактирования структуры меша для виджета PolygonMesh.
+        Реализованы алгоритм генерации текстурного меша, жадный алгоритм упаковки прямоугольных текстур в атласы, генетический 
+        алгоритм упаковки полигональных текстур в атлас.  
     \end{frame}
     \begin{frame}
         \frametitle{Заключение}
         По результатам работы было проведено тестирование, ревью кода и перенос кода в рабочую копию игрового движка 
         Citrus
+
+        Был получен акт о внедрении.
     \end{frame}
 \end{document}\frametitle{Триангуляция Делоне}
